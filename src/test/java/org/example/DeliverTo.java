@@ -15,11 +15,21 @@ import java.time.Duration;
 
 public class DeliverTo {
     private WebDriver driver;
+    private static final String AMAZON_URL = "https://www.amazon.com/";
+    private static final String LOS_ANGELES_ZIP_CODE = "90001";
+    private final By deliverToIcon = By.id("nav-global-location-popover-link");
+    private final By zipCodeInputField = By.id("GLUXZipUpdateInput");
+    private final By zipCodeApplyButton = By.xpath("//input[@aria-labelledby='GLUXZipUpdate-announce']");
+    private final By continueButton = By.xpath("//div[@class='a-popover-footer']//input[@id='GLUXConfirmClose']");
+    private final By countriesDropDown = By.xpath("//span[@data-action='a-dropdown-button']");
+    private final By losAngeles = By.xpath("//span[contains(text(), 'Los Angeles 90001')]");
+    private final By poland = By.xpath("//a[@data-value='{\"stringVal\":\"PL\"}']");
 
     @BeforeClass
     private void setDriver() {
         System.setProperty("webdriver.chrome.driver", "src/test/resources/webdriver/chromedriver.exe");
         driver = new ChromeDriver();
+        driver.manage().window().maximize();
     }
 
     @AfterClass
@@ -28,66 +38,41 @@ public class DeliverTo {
     }
 
     @Test
-    private void changeDeliverLocation() throws InterruptedException {
-        openAmazonWebPage();
-        driver.manage().window().maximize();
-        clickDeliverToIcon();
-        enterZipCode();
-        clickApplyBtn();
-        clickContinueBtn();
-        Assert.assertEquals(getUpdatedLocation().getText(), "Los Angeles 90001\u200C", "Wrong Location");
+    private void changeDeliverLocation() {
+        openPage(AMAZON_URL);
+        click(deliverToIcon);
+        sendKeys(zipCodeInputField, LOS_ANGELES_ZIP_CODE);
+        click(zipCodeApplyButton);
+        click(continueButton);
+        Assert.assertEquals(getElement(losAngeles).getText(), "Los Angeles 90001\u200C");
     }
 
     @Test
     private void checkIfPolandIsPresent() {
-        openAmazonWebPage();
-        driver.manage().window().maximize();
-        clickDeliverToIcon();
-        clickCountryDropDown();
-        findPoland();
+        openPage(AMAZON_URL);
+        click(deliverToIcon);
+        click(countriesDropDown);
+        Assert.assertEquals(getElement(poland).getText(), "Poland");
     }
 
-    private void findPoland() {
-        new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.elementToBeClickable(By.xpath("//a[text()='Poland']")));
+    private void openPage(String url) {
+        driver.get(url);
     }
 
-    private void clickCountryDropDown() {
-        WebElement countryDropDown = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[@data-action='a-dropdown-button']")));
-        countryDropDown.click();
+    private void click(By locator) {
+        WebElement element = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(locator));
+        element.click();
     }
 
-    private WebElement getUpdatedLocation() {
+    private void sendKeys(By locator, String keys) {
+        WebElement element = new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.visibilityOfElementLocated(locator));
+        element.sendKeys(keys);
+    }
+
+    private WebElement getElement(By locator) {
         return new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(), 'Los Angeles 90001')]")));
-    }
-
-    private void openAmazonWebPage() {
-        driver.get("https://www.amazon.com/");
-    }
-
-    private void clickContinueBtn() {
-        WebElement continueBtn = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='a-popover-footer']//input[@id='GLUXConfirmClose']")));
-        continueBtn.click();
-    }
-
-    private void clickApplyBtn() {
-        WebElement zipCodeApplyBtn = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@aria-labelledby='GLUXZipUpdate-announce']")));
-        zipCodeApplyBtn.click();
-    }
-
-    private void enterZipCode() {
-        WebElement zipCodeInputField = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.id("GLUXZipUpdateInput")));
-        zipCodeInputField.sendKeys("90001");
-    }
-
-    private void clickDeliverToIcon() {
-        WebElement deliverToIcon = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-global-location-popover-link")));
-        deliverToIcon.click();
+                .until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 }
