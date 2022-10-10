@@ -17,12 +17,13 @@ public class DeliverTo {
     private WebDriver driver;
     private static final String AMAZON_URL = "https://www.amazon.com/";
     private static final String LOS_ANGELES_ZIP_CODE = "90001";
+    private static final Duration TIMEOUT = Duration.ofSeconds(10);
     private final By deliverToIcon = By.id("nav-global-location-popover-link");
     private final By zipCodeInputField = By.id("GLUXZipUpdateInput");
     private final By zipCodeApplyButton = By.xpath("//input[@aria-labelledby='GLUXZipUpdate-announce']");
     private final By continueButton = By.xpath("//div[@class='a-popover-footer']//input[@id='GLUXConfirmClose']");
     private final By countriesDropDown = By.xpath("//span[@data-action='a-dropdown-button']");
-    private final By losAngeles = By.xpath("//span[contains(text(), 'Los Angeles 90001')]");
+    private final By location = By.xpath("//span[contains(text(), 'Los Angeles 90001')]");
     private final By poland = By.xpath("//a[@data-value='{\"stringVal\":\"PL\"}']");
 
     @BeforeClass
@@ -38,17 +39,17 @@ public class DeliverTo {
     }
 
     @Test
-    private void changeDeliverLocation() {
+    private void testChangingDeliverLocation() {
         openPage(AMAZON_URL);
         click(deliverToIcon);
         sendKeys(zipCodeInputField, LOS_ANGELES_ZIP_CODE);
         click(zipCodeApplyButton);
         click(continueButton);
-        Assert.assertEquals(getElement(losAngeles).getText(), "Los Angeles 90001\u200C");
+        Assert.assertEquals(getElement(location).getText(), "Los Angeles 90001\u200C");
     }
 
     @Test
-    private void checkIfPolandIsPresent() {
+    private void testIfDeliverToPolandIsAvailable() {
         openPage(AMAZON_URL);
         click(deliverToIcon);
         click(countriesDropDown);
@@ -60,19 +61,15 @@ public class DeliverTo {
     }
 
     private void click(By locator) {
-        WebElement element = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(locator));
-        element.click();
+        getElement(locator).click();
     }
 
     private void sendKeys(By locator, String keys) {
-        WebElement element = new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOfElementLocated(locator));
-        element.sendKeys(keys);
+        getElement(locator).sendKeys(keys);
     }
 
     private WebElement getElement(By locator) {
-        return new WebDriverWait(driver, Duration.ofSeconds(10))
+        return new WebDriverWait(driver, TIMEOUT)
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 }
