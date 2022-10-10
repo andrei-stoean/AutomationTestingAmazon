@@ -14,7 +14,6 @@ import org.testng.annotations.Test;
 import java.time.Duration;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 public class FilteringSearching {
@@ -86,11 +85,9 @@ public class FilteringSearching {
 
     private boolean verifyIfCorrectlySorted(Comparator<Double> comparator) {
         List<Double> prices = getElements(priceResults).stream()
-                .map(elem -> elem.getAttribute("textContext"))
-                .filter(Objects::nonNull)
+                .map(elem -> elem.getAttribute("textContent"))
                 .map(price -> Double.valueOf(price.substring(1)))
                 .toList();
-        System.out.println(prices);
         return prices.equals(prices.stream().sorted(comparator).toList());
     }
 
@@ -98,7 +95,6 @@ public class FilteringSearching {
         List<String> prices = getElements(priceResults).stream()
                 .map(elem -> elem.getAttribute("textContent"))
                 .toList();
-        if (prices.isEmpty()) return true;
         long pricesWithinRange = prices.stream().map(price -> Double.valueOf(price.substring(1)))
                 .filter(price -> price >= minValue && price <= maxValue).count();
         return pricesWithinRange >= prices.size() / 2;
@@ -114,21 +110,14 @@ public class FilteringSearching {
                 .count() >= webElements.size() / 2;
     }
 
-    private void openPage(String url) {
-        driver.get(url);
-    }
-
-    private void click(By locator) {
-        getElement(locator).click();
-    }
-
-    private void sendKeys(By locator, String keys) {
-        getElement(locator).sendKeys(keys);
-    }
-
     private WebElement getElement(By locator) {
         return new WebDriverWait(driver, TIMEOUT)
                 .until(ExpectedConditions.presenceOfElementLocated(locator));
+    }
+
+    private WebElement getRandomElement(By locator) {
+        List<WebElement> categories = getElements(locator);
+        return getElements(locator).get(new Random().nextInt(categories.size()));
     }
 
     private List<WebElement> getElements(By locator) {
@@ -136,9 +125,16 @@ public class FilteringSearching {
                 .until(ExpectedConditions.presenceOfAllElementsLocatedBy(locator));
     }
 
-    private WebElement getRandomElement(By locator) {
-        List<WebElement> categories = getElements(locator);
-        return getElements(locator).get(new Random().nextInt(categories.size()));
+    private void openPage(String url) {
+        driver.get(url);
+    }
+
+    private void sendKeys(By locator, String keys) {
+        getElement(locator).sendKeys(keys);
+    }
+
+    private void click(By locator) {
+        getElement(locator).click();
     }
 
     private void clickRandomElement(By locator) {
