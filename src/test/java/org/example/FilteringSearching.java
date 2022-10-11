@@ -140,6 +140,8 @@ public class FilteringSearching {
     }
 
     private void clickRandomElement(By locator) {
-        getRandomElement(locator).click();
+        new WebDriverWait(driver, TIMEOUT)
+                .until(ExpectedConditions.elementToBeClickable(getRandomElement(locator)))
+                .click();
     }
 }
