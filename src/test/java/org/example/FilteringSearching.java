@@ -20,13 +20,13 @@ public class FilteringSearching {
     private WebDriver driver;
     private static final String AMAZON_URL = "https://www.amazon.com/";
     private static final Duration TIMEOUT = Duration.ofSeconds(10);
-    private final By categories = By.xpath("//h2[text()='Shop by Category']/ancestor::div[@class='a-cardui quad-label-card card-lite quad-image-label']//div[contains(@class, 'quadrant-container')]");
-    private final By featuredBrands = By.xpath("//span[text()='Featured Brands']/../..//span[@class='a-size-base a-color-base']");
-    private final By searchResults = By.xpath("//span[@data-component-type='s-search-results']//span[@class='a-size-base-plus a-color-base a-text-normal' or @class='a-size-medium a-color-base a-text-normal']");
+    private final By categories = By.xpath("//h2[text()='Shop by Category' or text()='Gaming accessories']/../following-sibling::div//div[contains(@class, 'quadrant-container')] | //img[@alt='Electronics']");
+    private final By featuredBrands = By.xpath("//span[text()='Featured Brands' or text()='Brands']/../..//span[@class='a-size-base a-color-base' and not(ancestor::div[@class='a-row a-expander-container a-expander-extend-container'])]");
+    private final By searchResults = By.xpath("//span[@data-component-type='s-search-results' and not(contains(@class, 'AdHolder'))]//span[@class='a-size-base-plus a-color-base a-text-normal' or @class='a-size-medium a-color-base a-text-normal']");
     private final By minField = By.id("low-price");
     private final By maxField = By.id("high-price");
     private final By goBtn = By.xpath("//input[@class='a-button-input']");
-    private final By priceResults = By.xpath("//div[@data-component-type='s-search-result' and not(contains(@class, 'AdHolder'))]//span[@data-a-color='base']/span[@class='a-offscreen']");
+    private final By priceResults = By.xpath("//div[@data-component-type='s-search-result']//span[@data-a-color='base']/span[@class='a-offscreen']");
     private final By checkedCheckbox = By.xpath("//input[@checked]/../../following-sibling::span");
     private final By sortByDropDown = By.xpath("//span[@data-csa-c-func-deps='aui-da-a-dropdown-button']");
     private final By lowToHigh = By.id("s-result-sort-select_1");
@@ -77,37 +77,39 @@ public class FilteringSearching {
         Assert.assertTrue(verifyIfCorrectlySorted(Comparator.reverseOrder()));
     }
 
+    private boolean verifyMostResultsContainBrandName() {
+        String brandName = getElement(checkedCheckbox).getText().toLowerCase();
+        List<WebElement> results = getElements(searchResults);
+        long numberOfResultsThatContainBrandName = results.stream()
+                .map(WebElement::getText)
+                .map(String::toLowerCase)
+                .filter(elem -> elem.contains(brandName))
+                .count();
+        return numberOfResultsThatContainBrandName >= results.size() / 2;
+    }
+
+    private boolean verifyMostPricesAreWithinRange(int minValue, int maxValue) {
+        List<WebElement> results = getElements(priceResults);
+        long numberOfPricesWithinRange = results.stream()
+                .map(elem -> elem.getAttribute("textContent"))
+                .map(price -> Double.valueOf(price.substring(1)))
+                .filter(price -> price >= minValue && price <= maxValue)
+                .count();
+        return numberOfPricesWithinRange >= results.size() / 2;
+    }
+
+    private boolean verifyIfCorrectlySorted(Comparator<Double> comparator) {
+        List<Double> priceResults = getElements(this.priceResults).stream()
+                .map(elem -> elem.getAttribute("textContent"))
+                .map(price -> Double.valueOf(price.substring(1)))
+                .toList();
+        return priceResults.equals(priceResults.stream().sorted(comparator).toList());
+    }
+
     private void filterResultsByPriceRange(int minValue, int maxValue) {
         sendKeys(minField, String.valueOf(minValue));
         sendKeys(maxField, String.valueOf(maxValue));
         click(goBtn);
-    }
-
-    private boolean verifyIfCorrectlySorted(Comparator<Double> comparator) {
-        List<Double> prices = getElements(priceResults).stream()
-                .map(elem -> elem.getAttribute("textContent"))
-                .map(price -> Double.valueOf(price.substring(1)))
-                .toList();
-        return prices.equals(prices.stream().sorted(comparator).toList());
-    }
-
-    private boolean verifyMostPricesAreWithinRange(int minValue, int maxValue) {
-        List<String> prices = getElements(priceResults).stream()
-                .map(elem -> elem.getAttribute("textContent"))
-                .toList();
-        long pricesWithinRange = prices.stream().map(price -> Double.valueOf(price.substring(1)))
-                .filter(price -> price >= minValue && price <= maxValue).count();
-        return pricesWithinRange >= prices.size() / 2;
-    }
-
-    private boolean verifyMostResultsContainBrandName() {
-        String brandName = getElement(checkedCheckbox).getText().toLowerCase();
-        List<WebElement> webElements = getElements(searchResults).stream().toList();
-        return webElements.stream()
-                .map(WebElement::getText)
-                .map(String::toLowerCase)
-                .filter(elem -> elem.contains(brandName))
-                .count() >= webElements.size() / 2;
     }
 
     private WebElement getElement(By locator) {
@@ -115,14 +117,14 @@ public class FilteringSearching {
                 .until(ExpectedConditions.presenceOfElementLocated(locator));
     }
 
-    private WebElement getRandomElement(By locator) {
-        List<WebElement> categories = getElements(locator);
-        return getElements(locator).get(new Random().nextInt(categories.size()));
-    }
-
     private List<WebElement> getElements(By locator) {
         return new WebDriverWait(driver, TIMEOUT)
                 .until(ExpectedConditions.presenceOfAllElementsLocatedBy(locator));
+    }
+
+    private WebElement getRandomElement(By locator) {
+        List<WebElement> categories = getElements(locator);
+        return getElements(locator).get(new Random().nextInt(categories.size()));
     }
 
     private void openPage(String url) {
