@@ -2,11 +2,9 @@ package org.example;
 
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
@@ -21,23 +19,26 @@ public class AddRemoveItem {
     private WebDriver webDriver;
 
     @BeforeMethod
-    public void setUpDrive() {
+    public void setUpDriver() {
         System.setProperty(
                 "webdriver.chrome.driver",
                 "src/test/resources/webdriver/chromedriver.exe"
         );
 
         webDriver = new ChromeDriver();
-    }
-
-    @Test
-    public void firstTest() {
 
         webDriver.get("https://www.amazon.com/");
         webDriver.manage().window().maximize();
+    }
 
-        WebElement category = webDriver.findElement(By.xpath("//a[@aria-label=\"Computers & Accessories\"]"));
-        category.click();
+    @Test
+    public void verifyAddFunctionality() {
+
+        WebElement electronics = webDriver.findElement(By.xpath("//img[@alt='Electronics']"));
+        electronics.click();
+
+        WebElement computers = webDriver.findElement(By.xpath("//span[contains(text(),'Computers')]"));
+        computers.click();
 
 
         WebElement openItem = webDriver.findElement(By.xpath("//*[contains(text(),'Seagate Portable')]"));
@@ -59,13 +60,13 @@ public class AddRemoveItem {
 
 
     @Test
-    public void secondTest() {
+    public void verifyRemoveFunctionality() {
 
-        webDriver.get("https://www.amazon.com/");
-        webDriver.manage().window().maximize();
+        WebElement electronics = webDriver.findElement(By.xpath("//img[@alt='Electronics']"));
+        electronics.click();
 
-        WebElement category = webDriver.findElement(By.xpath("//a[@aria-label=\"Computers & Accessories\"]"));
-        category.click();
+        WebElement computers = webDriver.findElement(By.xpath("//span[contains(text(),'Computers')]"));
+        computers.click();
 
 
         WebElement openItem = webDriver.findElement(By.xpath("//*[contains(text(),'Seagate Portable')]"));
