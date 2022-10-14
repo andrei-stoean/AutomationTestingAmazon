@@ -1,19 +1,22 @@
 package org.example;
 
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 
-public class DeliverTo {
+public class DeliverToTests {
     private WebDriver driver;
     private static final String AMAZON_URL = "https://www.amazon.com/";
     private static final String LOS_ANGELES_ZIP_CODE = "90001";
@@ -31,21 +34,24 @@ public class DeliverTo {
     private final By shipToCountry = By.xpath("//span[contains(text(), 'No Import')] | //div[@id='contextualIngressPtLabel_deliveryShortLine']/span[2]");
 
     @BeforeClass
-    private void setDriver() {
+    public void setDriver() {
         System.setProperty("webdriver.chrome.driver", "src/test/resources/webdriver/chromedriver.exe");
         driver = new ChromeDriver();
         driver.manage().window().maximize();
     }
-
     @AfterClass
-    private void closeDriver() {
+    public void closeDriver() {
         driver.quit();
+    }
+
+    @BeforeMethod
+    public void clickDeliverToIcon() {
+        openPage(AMAZON_URL);
+        click(deliverToIcon);
     }
 
     @Test
     private void testChangingDeliverLocation() {
-        openPage(AMAZON_URL);
-        click(deliverToIcon);
         sendKeys(zipCodeInputField, LOS_ANGELES_ZIP_CODE);
         click(zipCodeApplyButton);
         click(continueButton);
@@ -54,16 +60,12 @@ public class DeliverTo {
 
     @Test
     private void testIfDeliverToPolandIsAvailable() {
-        openPage(AMAZON_URL);
-        click(deliverToIcon);
         click(countriesDropDown);
         Assert.assertEquals(getElement(poland).getText(), "Poland");
     }
 
     @Test
     private void testChangingDeliverToCountry() {
-        openPage(AMAZON_URL);
-        click(deliverToIcon);
         click(countriesDropDown);
         click(poland);
         click(doneBtn);
