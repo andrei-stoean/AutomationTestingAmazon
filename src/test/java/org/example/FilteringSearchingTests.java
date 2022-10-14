@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.Duration;
@@ -16,7 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-public class FilteringSearching {
+public class FilteringSearchingTests {
     private WebDriver driver;
     private static final String AMAZON_URL = "https://www.amazon.com/";
     private static final Duration TIMEOUT = Duration.ofSeconds(10);
@@ -45,19 +46,20 @@ public class FilteringSearching {
         driver.quit();
     }
 
-    @Test
-    public void testSearchingBrandedItems() {
+    @BeforeMethod
+    public void clickACategoryAndChooseABrand() {
         openPage(AMAZON_URL);
         clickRandomElement(categories);
         clickRandomElement(featuredBrands);
+    }
+
+    @Test
+    public void testSearchingBrandedItems() {
         Assert.assertTrue(doMostResultsContainBrandName());
     }
 
     @Test
     private void testSearchingWithinPriceRange() {
-        openPage(AMAZON_URL);
-        clickRandomElement(categories);
-        clickRandomElement(featuredBrands);
         int minValue = new Random().nextInt(10);
         int maxValue = new Random().nextInt(minValue, 200);
         filterResultsByPriceRange(minValue, maxValue);
@@ -66,9 +68,6 @@ public class FilteringSearching {
 
     @Test
     private void testSortingResultsByPrice() {
-        openPage(AMAZON_URL);
-        clickRandomElement(categories);
-        clickRandomElement(featuredBrands);
         click(sortByDropDown);
         click(lowToHigh);
         Assert.assertTrue(areResultsCorrectlySorted(Comparator.naturalOrder()));
@@ -80,6 +79,7 @@ public class FilteringSearching {
     private boolean doMostResultsContainBrandName() {
         String brandName = getElement(checkedBrand).getText().toLowerCase();
         List<WebElement> results = getElements(searchResults);
+        if (results.size() == 0) throw new AssertionError("Result list is empty");
         long numberOfResultsThatContainBrandName = results.stream()
                 .map(WebElement::getText)
                 .map(String::toLowerCase)
@@ -90,6 +90,7 @@ public class FilteringSearching {
 
     private boolean areMostPricesWithinRange(int minValue, int maxValue) {
         List<WebElement> results = getElements(priceResults);
+        if (results.size() == 0) throw new AssertionError("Result list is empty");
         long numberOfPricesWithinRange = results.stream()
                 .map(elem -> elem.getAttribute("textContent"))
                 .map(price -> Double.valueOf(price.substring(1)))
@@ -99,11 +100,11 @@ public class FilteringSearching {
     }
 
     private boolean areResultsCorrectlySorted(Comparator<Double> comparator) {
-        List<Double> priceResults = getElements(this.priceResults).stream()
+        List<Double> results = getElements(priceResults).stream()
                 .map(elem -> elem.getAttribute("textContent"))
                 .map(price -> Double.valueOf(price.substring(1)))
                 .toList();
-        return priceResults.equals(priceResults.stream().sorted(comparator).toList());
+        return results.equals(results.stream().sorted(comparator).toList());
     }
 
     private void filterResultsByPriceRange(int minValue, int maxValue) {
