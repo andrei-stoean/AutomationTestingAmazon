@@ -27,7 +27,7 @@ public class FilteringSearching {
     private final By maxField = By.id("high-price");
     private final By goBtn = By.xpath("//input[@class='a-button-input']");
     private final By priceResults = By.xpath("//div[@data-component-type='s-search-result']//span[@data-a-color='base']/span[@class='a-offscreen']");
-    private final By checkedCheckbox = By.xpath("//input[@checked]/../../following-sibling::span");
+    private final By checkedBrand = By.xpath("//input[@checked]/../../following-sibling::span");
     private final By sortByDropDown = By.xpath("//span[@data-csa-c-func-deps='aui-da-a-dropdown-button']");
     private final By lowToHigh = By.id("s-result-sort-select_1");
     private final By highToLow = By.id("s-result-sort-select_2");
@@ -50,7 +50,7 @@ public class FilteringSearching {
         openPage(AMAZON_URL);
         clickRandomElement(categories);
         clickRandomElement(featuredBrands);
-        Assert.assertTrue(verifyMostResultsContainBrandName());
+        Assert.assertTrue(doMostResultsContainBrandName());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class FilteringSearching {
         int minValue = new Random().nextInt(10);
         int maxValue = new Random().nextInt(minValue, 200);
         filterResultsByPriceRange(minValue, maxValue);
-        Assert.assertTrue(verifyMostPricesAreWithinRange(minValue, maxValue));
+        Assert.assertTrue(areMostPricesWithinRange(minValue, maxValue));
     }
 
     @Test
@@ -71,14 +71,14 @@ public class FilteringSearching {
         clickRandomElement(featuredBrands);
         click(sortByDropDown);
         click(lowToHigh);
-        Assert.assertTrue(verifyIfCorrectlySorted(Comparator.naturalOrder()));
+        Assert.assertTrue(areResultsCorrectlySorted(Comparator.naturalOrder()));
         click(sortByDropDown);
         click(highToLow);
-        Assert.assertTrue(verifyIfCorrectlySorted(Comparator.reverseOrder()));
+        Assert.assertTrue(areResultsCorrectlySorted(Comparator.reverseOrder()));
     }
 
-    private boolean verifyMostResultsContainBrandName() {
-        String brandName = getElement(checkedCheckbox).getText().toLowerCase();
+    private boolean doMostResultsContainBrandName() {
+        String brandName = getElement(checkedBrand).getText().toLowerCase();
         List<WebElement> results = getElements(searchResults);
         long numberOfResultsThatContainBrandName = results.stream()
                 .map(WebElement::getText)
@@ -88,7 +88,7 @@ public class FilteringSearching {
         return numberOfResultsThatContainBrandName >= results.size() / 2;
     }
 
-    private boolean verifyMostPricesAreWithinRange(int minValue, int maxValue) {
+    private boolean areMostPricesWithinRange(int minValue, int maxValue) {
         List<WebElement> results = getElements(priceResults);
         long numberOfPricesWithinRange = results.stream()
                 .map(elem -> elem.getAttribute("textContent"))
@@ -98,7 +98,7 @@ public class FilteringSearching {
         return numberOfPricesWithinRange >= results.size() / 2;
     }
 
-    private boolean verifyIfCorrectlySorted(Comparator<Double> comparator) {
+    private boolean areResultsCorrectlySorted(Comparator<Double> comparator) {
         List<Double> priceResults = getElements(this.priceResults).stream()
                 .map(elem -> elem.getAttribute("textContent"))
                 .map(price -> Double.valueOf(price.substring(1)))
