@@ -11,40 +11,39 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 
-public class SearchField {
+public class SearchFieldTests {
     private WebDriver webDriver;
 
     @BeforeClass
-    private void setDriver() {
+    public void setDriver() {
         System.setProperty("webdriver.chrome.driver", "src/test/resources/webdriver/chromedriver.exe");
         webDriver = new ChromeDriver();
-
     }
 
     @Test
-    private void searchFieldWritingTest() {
+    public void searchFieldWritingTest() {
         openAmazonWebPage();
-        String textTry= "kgvgvkyuoum,8lhlmu,ybjhuvbhjvlb.hylubyhv;bhjlv,khn;biuh";
+        String randomTextForSearch= "kgvgvkyuoum,8lhlmu,ybjhuvbhjvlb.hylubyhv;bhjlv,khn;biuh";
         WebElement searchBar = webDriver.findElement(By.id("twotabsearchtextbox"));
-        searchBar.sendKeys(textTry);
+        searchBar.sendKeys(randomTextForSearch);
 
         WebElement searchButton = webDriver.findElement(By.id("nav-search-submit-text"));
         searchButton.click();
 
         WebElement textErorr = webDriver.findElement(By.xpath("//div[@class='a-row']"));
-        Assert.assertEquals(String.format("No results for %s.", textTry), textErorr.getText());
+        Assert.assertEquals(String.format("No results for %s.", randomTextForSearch), textErorr.getText());
 
     }
 
 
     @Test
-    private void searchFieldInfo() {
+    public void searchFieldInfo() {
         openAmazonWebPage();
         WebElement searchBar = webDriver.findElement(By.id("twotabsearchtextbox"));
         searchBar.sendKeys("laptop");
 
-        WebElement searchButton = webDriver.findElement(By.id("nav-search-submit-text"));
-        searchButton.click();
+        WebElement searchResultsMessage = webDriver.findElement(By.id("nav-search-submit-text"));
+        searchResultsMessage.click();
 
         WebElement textEqualsWithKey = webDriver.findElement(By.xpath("//span[@class=\"a-color-state a-text-bold\"]"));
         Assert.assertEquals("\"laptop\"", textEqualsWithKey.getText());
@@ -52,28 +51,28 @@ public class SearchField {
     }
 
     @Test
-    private void searchResultsForSpecificKey() {
+    public void searchResultsForSpecificKey() {
         openAmazonWebPage();
         WebElement searchBar = webDriver.findElement(By.id("twotabsearchtextbox"));
         searchBar.sendKeys("laptop");
 
-        WebElement searchButton = webDriver.findElement(By.id("nav-search-submit-text"));
-        searchButton.click();
+        WebElement searchResultsMessage = webDriver.findElement(By.id("nav-search-submit-text"));
+        searchResultsMessage.click();
 
         List<WebElement> searchlist = webDriver.findElements(By.xpath("//span[@class='a-size-medium a-color-base a-text-normal']"));
-        Assert.assertTrue(searchForKey(searchlist));
+        Assert.assertTrue( SpecificWord(searchlist));
     }
 
-    private boolean searchForKey (List<WebElement> results) {
+    private boolean  SpecificWord (List<WebElement> results) {
         return results.stream().map(WebElement::getText).anyMatch(x -> x.toLowerCase().contains("laptop"));
     }
 
     @AfterClass
-    private void closeDriver() {
+    public void closeDriver() {
         webDriver.quit();
     }
 
-    private void openAmazonWebPage() {
+    public void openAmazonWebPage() {
         webDriver.get("https://www.amazon.com/");
         webDriver.manage().window().maximize();
     }
