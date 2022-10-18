@@ -19,11 +19,11 @@ public class ResultsPage extends BasePage {
     @FindBy(xpath = "//div[@data-component-type='s-search-result']//span[@data-a-color='base']/span[@class='a-offscreen']")
     List<WebElement> priceResults;
     @FindBy(id = "low-price")
-    WebElement minField;
+    WebElement minPriceField;
     @FindBy(id = "high-price")
-    WebElement maxField;
+    WebElement maxPriceField;
     @FindBy(xpath = "//input[@class='a-button-input']")
-    WebElement goBtn;
+    WebElement goButton;
     @FindBy(xpath = "//span[@data-csa-c-func-deps='aui-da-a-dropdown-button']")
     WebElement sortByDropDown;
     @FindBy(id = "s-result-sort-select_1")
@@ -47,7 +47,7 @@ public class ResultsPage extends BasePage {
     }
 
     public long getNumberOfProductsContainingBrandName() {
-        String brandName = selectedBrand.getText();
+        var brandName = selectedBrand.getText();
         return results.stream()
                 .map(WebElement::getText)
                 .filter(productName -> productName.contains(brandName))
@@ -55,9 +55,9 @@ public class ResultsPage extends BasePage {
     }
 
     public ResultsPage filterByPrice(int minValue, int maxValue) {
-        minField.sendKeys(String.valueOf(minValue));
-        maxField.sendKeys(String.valueOf(maxValue));
-        goBtn.click();     
+        minPriceField.sendKeys(String.valueOf(minValue));
+        maxPriceField.sendKeys(String.valueOf(maxValue));
+        goButton.click();
         return this;
     }
 
