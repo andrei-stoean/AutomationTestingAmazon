@@ -15,11 +15,11 @@ public abstract class BaseTest {
     }
 
     @BeforeClass
-    protected void setUpDriver() {
+    public void setUpDriver() {
         webDriver.manage().window().maximize();
     }
     @AfterClass
-    protected void closeDriver() {
+    public void closeDriver() {
         webDriver.quit();
     }
 }

@@ -28,12 +28,12 @@ public class HomePage extends BasePage {
     WebElement locationLabel;
     @FindBy(xpath = "//a[@data-value='{\"stringVal\":\"PL\"}']")
     WebElement poland;
-    @FindBy(xpath = "//span[@data-action='a-dropdown-button']")
-    WebElement countriesDropDown;
+    By countriesDropDown = By.xpath("//span[@data-action='a-dropdown-button']");
     @FindBy(xpath = "//button[@name='glowDoneButton']")
     WebElement doneButton;
     @FindBy(xpath = "//h2[text()='Shop by Category' or text()='Gaming accessories']/../following-sibling::div//div[contains(@class, 'quadrant-container')] | //img[@alt='Electronics']")
     List<WebElement> categories;
+
 
     public HomePage(WebDriver webDriver) {
         super(webDriver);
@@ -57,15 +57,13 @@ public class HomePage extends BasePage {
     }
 
     public String getDeliverToLocation() {
-        new WebDriverWait(webDriver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.stalenessOf(webDriver.findElement(By.id("nav-global-location-popover-link"))));
         return locationLabel.getText();
     }
 
     public HomePage clickCountriesDropDown() {
-        WebElement element = new WebDriverWait(webDriver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.elementToBeClickable(By.xpath("//span[@data-action='a-dropdown-button']")));
-        element.click();
+        var dropDown = new WebDriverWait(webDriver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.elementToBeClickable(countriesDropDown));
+        dropDown.click();
         return this;
     }
 
@@ -85,8 +83,8 @@ public class HomePage extends BasePage {
         return this;
     }
 
-    public CategoryResultsPage clickRandomCategory() {
+    public ResultsPage clickRandomCategory() {
         categories.get(new Random().nextInt(categories.size())).click();
-        return new CategoryResultsPage(webDriver);
+        return new ResultsPage(webDriver);
     }
 }

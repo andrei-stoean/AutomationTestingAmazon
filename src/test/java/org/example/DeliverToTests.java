@@ -1,33 +1,36 @@
 package org.example;
 
 import org.example.pageobject.pages.HomePage;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.*;
 
 public class DeliverToTests extends BaseTest {
     @Test
-    private void changeDeliverToLocationByZipCode() {
-        String updatedLocation = new HomePage(webDriver).open()
+    public void changeDeliverToLocationByZipCode() {
+        var updatedLocation = new HomePage(webDriver).open()
                 .clickDeliverToIcon()
                 .enterZipCodeApplyAndContinue()
+                .waitForPageLoad()
                 .getDeliverToLocation();
-        Assert.assertEquals(updatedLocation, "Los Angeles 90001\u200C");
+        assertTrue(updatedLocation.contains("Los Angeles 90001"));
     }
 
     @Test
-    private void isPolandAvailable() {
-        String country = new HomePage(webDriver).open()
+    public void isPolandAvailable() {
+        var country = new HomePage(webDriver).open()
                 .clickDeliverToIcon()
                 .clickCountriesDropDown()
                 .clickPoland()
                 .clickDone()
+                .waitForPageLoad()
                 .getDeliverToLocation();
-        Assert.assertEquals(country, "Poland");
+        assertEquals(country, "Poland");
     }
 
     @Test
-    private void changeDeliverToCountry() {
-        String shipToCountry = new HomePage(webDriver).open()
+    public void changeDeliverToCountry() {
+        var shipToCountry = new HomePage(webDriver).open()
                 .clickDeliverToIcon()
                 .clickCountriesDropDown()
                 .clickPoland()
@@ -36,6 +39,6 @@ public class DeliverToTests extends BaseTest {
                 .clickRandomCategory()
                 .clickRandomResult()
                 .getShipToCountry();
-        Assert.assertTrue(shipToCountry.contains("Poland"));
+        assertTrue(shipToCountry.contains("Poland"));
     }
 }

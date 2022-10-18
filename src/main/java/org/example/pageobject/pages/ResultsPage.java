@@ -1,0 +1,85 @@
+package org.example.pageobject.pages;
+
+import org.example.pageobject.BasePage;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+public class ResultsPage extends BasePage {
+    @FindBy(xpath = "//span[@class='a-size-base-plus a-color-base a-text-normal' or @class='a-size-medium a-color-base a-text-normal']")
+    List<WebElement> results;
+    @FindBy(xpath = "//span[text()='Featured Brands' or text()='Brands']/../..//span[@class='a-size-base a-color-base' and not(ancestor::div[@class='a-row a-expander-container a-expander-extend-container'])]")
+    List<WebElement> featuredBrands;
+    @FindBy(xpath = "//input[@checked]/../../following-sibling::span")
+    WebElement selectedBrand;
+    @FindBy(xpath = "//div[@data-component-type='s-search-result']//span[@data-a-color='base']/span[@class='a-offscreen']")
+    List<WebElement> priceResults;
+    @FindBy(id = "low-price")
+    WebElement minField;
+    @FindBy(id = "high-price")
+    WebElement maxField;
+    @FindBy(xpath = "//input[@class='a-button-input']")
+    WebElement goBtn;
+    @FindBy(xpath = "//span[@data-csa-c-func-deps='aui-da-a-dropdown-button']")
+    WebElement sortByDropDown;
+    @FindBy(id = "s-result-sort-select_1")
+    WebElement lowToHigh;
+    @FindBy(id = "s-result-sort-select_2")
+    WebElement highToLow;
+
+
+    public ResultsPage(WebDriver webDriver) {
+        super(webDriver);
+    }
+
+    public ProductPage clickRandomResult() {
+        results.get(new Random().nextInt(results.size())).click();
+        return new ProductPage(webDriver);
+    }
+
+    public ResultsPage clickRandomBrand() {
+        featuredBrands.get(new Random().nextInt(featuredBrands.size())).click();
+        return this;
+    }
+
+    public long getNumberOfProductsContainingBrandName() {
+        String brandName = selectedBrand.getText();
+        return results.stream()
+                .map(WebElement::getText)
+                .filter(productName -> productName.contains(brandName))
+                .count();
+    }
+
+    public ResultsPage filterByPrice(int minValue, int maxValue) {
+        minField.sendKeys(String.valueOf(minValue));
+        maxField.sendKeys(String.valueOf(maxValue));
+        goBtn.click();     
+        return this;
+    }
+
+    public List<Double> getPriceResults() {
+        return priceResults.stream()
+                .map(elem -> elem.getAttribute("textContent"))
+                .map(price -> Double.valueOf(price.substring(1)))
+                .collect(Collectors.toList());
+    }
+
+    public ResultsPage clickSortByDropDown() {
+        sortByDropDown.click();
+        return this;
+    }
+
+    public ResultsPage clickLowToHigh() {
+        lowToHigh.click();
+        return this;
+    }
+
+    public ResultsPage clickHighToLow() {
+        highToLow.click();
+        return this;
+    }
+}
