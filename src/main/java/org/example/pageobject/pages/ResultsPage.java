@@ -1,10 +1,15 @@
 package org.example.pageobject.pages;
 
 import org.example.pageobject.BasePage;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import javax.xml.transform.Result;
+import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -31,6 +36,10 @@ public class ResultsPage extends BasePage {
     WebElement lowToHigh;
     @FindBy(id = "s-result-sort-select_2")
     WebElement highToLow;
+    @FindBy(xpath = "//span[@class=\"a-size-medium a-color-link a-text-bold\"]")
+    WebElement seeAllResults;
+    @FindBy(xpath = "//*[contains(text(),'Seagate Portable')]")
+    WebElement openItem;
 
     public ResultsPage(WebDriver webDriver) {
         super(webDriver);
@@ -80,6 +89,19 @@ public class ResultsPage extends BasePage {
 
     public ResultsPage clickHighToLow() {
         highToLow.click();
+        return this;
+    }
+    public ResultsPage clickSeeAllResults(){
+        seeAllResults.click();
+        return new ResultsPage(webDriver);
+    }
+    public ProductPage clickOnItem(){
+        openItem.click();
+        return new ProductPage(webDriver);
+    }
+    public ResultsPage waitItemToBeClickable(){
+        new WebDriverWait(webDriver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.elementToBeClickable(webDriver.findElement(By.xpath("//*[contains(text(),'Seagate Portable')]"))));
         return this;
     }
 }

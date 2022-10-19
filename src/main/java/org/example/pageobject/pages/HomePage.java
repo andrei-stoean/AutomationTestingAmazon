@@ -36,6 +36,9 @@ public class HomePage extends BasePage {
     @FindBy(xpath = "//h2[text()='Shop by Category' or text()='Gaming accessories']/../following-sibling::div//div[contains(@class, 'quadrant-container')] | //img[@alt='Electronics']")
     List<WebElement> categories;
     By countriesDropDown = By.xpath("//span[@data-action='a-dropdown-button']");
+    @FindBy(xpath = "//a[@aria-label=\"Computers & Accessories\"]")
+    WebElement computersCategory;
+
 
     public HomePage(WebDriver webDriver) {
         super(webDriver);
@@ -93,6 +96,11 @@ public class HomePage extends BasePage {
 
     public ResultsPage clickRandomCategory() {
         categories.get(new Random().nextInt(categories.size())).click();
+        return new ResultsPage(webDriver);
+    }
+
+    public ResultsPage clickComputersCategory(){
+        computersCategory.click();
         return new ResultsPage(webDriver);
     }
 }
