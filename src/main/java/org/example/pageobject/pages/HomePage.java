@@ -11,6 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class HomePage extends BasePage {
 
@@ -28,12 +29,13 @@ public class HomePage extends BasePage {
     WebElement locationLabel;
     @FindBy(xpath = "//a[@data-value='{\"stringVal\":\"PL\"}']")
     WebElement poland;
-    By countriesDropDown = By.xpath("//span[@data-action='a-dropdown-button']");
+    @FindBy(xpath = "//a[contains(@id,\"GLUXCountryList\")]")
+    List<WebElement> shipToCountries;
     @FindBy(xpath = "//button[@name='glowDoneButton']")
     WebElement doneButton;
     @FindBy(xpath = "//h2[text()='Shop by Category' or text()='Gaming accessories']/../following-sibling::div//div[contains(@class, 'quadrant-container')] | //img[@alt='Electronics']")
     List<WebElement> categories;
-
+    By countriesDropDown = By.xpath("//span[@data-action='a-dropdown-button']");
 
     public HomePage(WebDriver webDriver) {
         super(webDriver);
@@ -65,6 +67,12 @@ public class HomePage extends BasePage {
                 .until(ExpectedConditions.elementToBeClickable(countriesDropDown));
         dropDown.click();
         return this;
+    }
+
+    public List<String> getShipToCountries() {
+        return shipToCountries.stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
     }
 
     public HomePage clickPoland() {

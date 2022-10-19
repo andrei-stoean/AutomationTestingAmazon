@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class ResultsPage extends BasePage {
+
     @FindBy(xpath = "//span[@class='a-size-base-plus a-color-base a-text-normal' or @class='a-size-medium a-color-base a-text-normal']")
     List<WebElement> results;
     @FindBy(xpath = "//span[text()='Featured Brands' or text()='Brands']/../..//span[@class='a-size-base a-color-base' and not(ancestor::div[@class='a-row a-expander-container a-expander-extend-container'])]")
@@ -30,7 +31,6 @@ public class ResultsPage extends BasePage {
     WebElement lowToHigh;
     @FindBy(id = "s-result-sort-select_2")
     WebElement highToLow;
-
 
     public ResultsPage(WebDriver webDriver) {
         super(webDriver);

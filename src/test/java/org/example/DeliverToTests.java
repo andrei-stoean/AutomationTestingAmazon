@@ -17,15 +17,12 @@ public class DeliverToTests extends BaseTest {
     }
 
     @Test
-    public void isPolandAvailable() {
-        var country = new HomePage(webDriver).open()
+    public void isShippingToPolandAvailable() {
+        var shippingCountries = new HomePage(webDriver).open()
                 .clickDeliverToIcon()
                 .clickCountriesDropDown()
-                .clickPoland()
-                .clickDone()
-                .waitForPageLoad()
-                .getDeliverToLocation();
-        assertEquals(country, "Poland");
+                .getShipToCountries();
+        assertTrue(shippingCountries.contains("Poland"));
     }
 
     @Test
