@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.pageobject.pages.HomePage;
+import org.example.pageobject.pages.ProductPage;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -18,7 +19,6 @@ public class AddRemoveItemTests extends BaseTest {
 
         Assert.assertEquals("Added to Cart", addedToCart, "Item not added to cart");
         Assert.assertEquals("1", cartNumber);
-
     }
 
     @Test
