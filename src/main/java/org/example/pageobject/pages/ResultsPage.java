@@ -17,8 +17,8 @@ public class ResultsPage extends BasePage {
 
     @FindBy(xpath = "//span[@class='a-size-base-plus a-color-base a-text-normal' or @class='a-size-medium a-color-base a-text-normal']")
     List<WebElement> results;
-    @FindBy(xpath = "//span[text()='Featured Brands' or text()='Brands']/../..//span[@class='a-size-base a-color-base' and not(ancestor::div[@class='a-row a-expander-container a-expander-extend-container'])]")
-    List<WebElement> featuredBrands;
+    @FindBy(xpath = "//span[text()='Featured Brands' or text()='Brands']/../following-sibling::ul//a")
+    List<WebElement> brands;
     @FindBy(xpath = "//input[@checked]/../../following-sibling::span")
     WebElement selectedBrand;
     @FindBy(xpath = "//div[@data-component-type='s-search-result']//span[@data-a-color='base']/span[@class='a-offscreen']")
@@ -50,17 +50,20 @@ public class ResultsPage extends BasePage {
         super(webDriver);
     }
 
-    public ProductPage clickRandomResult() {
+    public ProductPage selectAProduct() {
         results.get(new Random().nextInt(results.size())).click();
         return new ProductPage(webDriver);
     }
 
-    public ResultsPage clickRandomBrand() {
-        featuredBrands.get(new Random().nextInt(featuredBrands.size())).click();
+    public ResultsPage selectABrand() {
+        WebElement brand = brands.stream()
+                .filter(WebElement::isDisplayed)
+                .findAny().orElseThrow();
+        brand.click();
         return this;
     }
 
-    public long getNumberOfProductsContainingBrandName() {
+    public long findNumberOfProductsContainingBrandName() {
         var brandName = selectedBrand.getText();
         return results.stream()
                 .map(WebElement::getText)
@@ -68,18 +71,24 @@ public class ResultsPage extends BasePage {
                 .count();
     }
 
-    public ResultsPage filterByPrice(int minValue, int maxValue) {
+    public ResultsPage filterResultsByPrice(int minValue, int maxValue) {
         minPriceField.sendKeys(String.valueOf(minValue));
         maxPriceField.sendKeys(String.valueOf(maxValue));
         goButton.click();
         return this;
     }
 
-    public List<Double> getPriceResults() {
+    public List<Double> findPriceResults() {
         return priceResults.stream()
                 .map(elem -> elem.getAttribute("textContent"))
                 .map(price -> Double.valueOf(price.substring(1)))
                 .collect(Collectors.toList());
+    }
+
+    public ResultsPage sortResultsByPriceIncreasing() {
+        sortByDropDown.click();
+        lowToHigh.click();
+        return this;
     }
 
     public List<String> resultsList() {
@@ -87,17 +96,8 @@ public class ResultsPage extends BasePage {
                 .map(WebElement::getText).collect(Collectors.toList());
     }
 
-    public ResultsPage clickSortByDropDown() {
+    public ResultsPage sortResultsByPriceDecreasing() {
         sortByDropDown.click();
-        return this;
-    }
-
-    public ResultsPage clickLowToHigh() {
-        lowToHigh.click();
-        return this;
-    }
-
-    public ResultsPage clickHighToLow() {
         highToLow.click();
         return this;
     }

@@ -11,23 +11,24 @@ import static org.testng.Assert.*;
 public class FilteringSearchingTests extends BaseTest{
     @Test
     public void searchByCategoryBrand() {
-        var numberOfResultsContainingBrandName = new HomePage(webDriver).open()
-                .clickRandomCategory()
-                .clickRandomBrand()
-                .getNumberOfProductsContainingBrandName();
+        var numberOfResultsContainingBrandName = new HomePage(webDriver)
+                .open()
+                .selectAProductCategory()
+                .selectABrand()
+                .findNumberOfProductsContainingBrandName();
         assertTrue(numberOfResultsContainingBrandName > 0);
     }
 
     @Test
     public void filterByPriceRange() {
-        int minPrice = new Random().nextInt(10);
-        int maxPrice = new Random().nextInt(minPrice, 200);
+        var minPrice = new Random().nextInt(10);
+        var maxPrice = new Random().nextInt(minPrice, 200);
 
         var priceResults = new HomePage(webDriver).open()
-                .clickRandomCategory()
-                .clickRandomBrand()
-                .filterByPrice(minPrice, maxPrice)
-                .getPriceResults();
+                .selectAProductCategory()
+                .selectABrand()
+                .filterResultsByPrice(minPrice, maxPrice)
+                .findPriceResults();
         assertFalse(priceResults.isEmpty(), "No results within price range");
 
         var numberOfPricesWithinRange = priceResults.stream()
@@ -38,19 +39,20 @@ public class FilteringSearchingTests extends BaseTest{
 
     @Test
     public void sortByPrice() {
-        var resultsPage = new HomePage(webDriver).open()
-                .clickRandomCategory()
-                .clickRandomBrand();
+        var resultsPage = new HomePage(webDriver)
+                .open()
+                .selectAProductCategory()
+                .selectABrand();
 
-        var priceResults = resultsPage.clickSortByDropDown()
-                .clickLowToHigh()
-                .getPriceResults();
+        var priceResults = resultsPage
+                .sortResultsByPriceIncreasing()
+                .findPriceResults();
         assertFalse(priceResults.isEmpty(), "No results matching");
         assertEquals(priceResults, priceResults.stream().sorted().toList());
 
-        priceResults = resultsPage.clickSortByDropDown()
-                .clickHighToLow()
-                .getPriceResults();
+        priceResults = resultsPage
+                .sortResultsByPriceDecreasing()
+                .findPriceResults();
         assertEquals(priceResults, priceResults.stream().sorted(Comparator.reverseOrder()).toList());
     }
 }

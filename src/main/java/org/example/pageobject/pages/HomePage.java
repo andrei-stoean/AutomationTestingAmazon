@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class HomePage extends BasePage {
 
     public static final String AMAZON_URL = "https://www.amazon.com/";
-    private static final String LOS_ANGELES_ZIP_CODE = "90001";
     @FindBy(id = "nav-global-location-popover-link")
     WebElement deliverToIcon;
     @FindBy(xpath = "//input[@data-action='GLUXPostalInputAction']")
@@ -56,49 +55,14 @@ public class HomePage extends BasePage {
         return this;
     }
 
-    public HomePage clickDeliverToIcon() {
-        deliverToIcon.click();
-        return this;
-    }
-
-    public HomePage SearchGivenText(String toSearch) {
-        searchBar.sendKeys(toSearch);
-        searchButton.click();
-        return this;
-    }
-
-    public HomePage enterZipCodeApplyAndContinue() {
-        zipCodeInputField.sendKeys(LOS_ANGELES_ZIP_CODE);
-        zipCodeApplyButton.click();
-        continueButton.click();
-        return this;
-    }
-
-    public String getDeliverToLocation() {
+    public String findDeliverToLocation() {
         return locationLabel.getText();
     }
 
-    public HomePage clickCountriesDropDown() {
+    public void clickCountriesDropDown() {
         var dropDown = new WebDriverWait(webDriver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.elementToBeClickable(countriesDropDown));
         dropDown.click();
-        return this;
-    }
-
-    public List<String> getShipToCountries() {
-        return shipToCountries.stream()
-                .map(WebElement::getText)
-                .collect(Collectors.toList());
-    }
-
-    public HomePage clickPoland() {
-        poland.click();
-        return this;
-    }
-
-    public HomePage clickDone() {
-        doneButton.click();
-        return this;
     }
 
     public HomePage waitForPageLoad() {
@@ -107,9 +71,39 @@ public class HomePage extends BasePage {
         return this;
     }
 
-    public ResultsPage clickRandomCategory() {
+    public ResultsPage selectAProductCategory() {
         categories.get(new Random().nextInt(categories.size())).click();
         return new ResultsPage(webDriver);
+    }
+
+    public List<String> findCountriesAvailableForDelivery() {
+        deliverToIcon.click();
+        clickCountriesDropDown();
+        return shipToCountries.stream()
+                .map(WebElement::getText)
+                .collect(Collectors.toList());
+    }
+
+    public HomePage SearchGivenText(String toSearch) {
+        searchBar.sendKeys(toSearch);
+        searchButton.click();
+        return this;
+    }
+
+    public HomePage changeDeliveryLocationByProvidingZipCode(String zipCode) {
+        deliverToIcon.click();
+        zipCodeInputField.sendKeys(zipCode);
+        zipCodeApplyButton.click();
+        continueButton.click();
+        return this;
+    }
+
+    public HomePage changeDeliveryCountryToPoland() {
+        deliverToIcon.click();
+        clickCountriesDropDown();
+        poland.click();
+        doneButton.click();
+        return this;
     }
 
     public ResultsPage clickComputersCategory(){

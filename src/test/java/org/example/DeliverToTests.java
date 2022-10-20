@@ -8,34 +8,32 @@ import static org.testng.Assert.*;
 public class DeliverToTests extends BaseTest {
     @Test
     public void changeDeliverToLocationByZipCode() {
-        var updatedLocation = new HomePage(webDriver).open()
-                .clickDeliverToIcon()
-                .enterZipCodeApplyAndContinue()
+        var losAngelesZipCode = "90001";
+        var updatedLocation = new HomePage(webDriver)
+                .open()
+                .changeDeliveryLocationByProvidingZipCode(losAngelesZipCode)
                 .waitForPageLoad()
-                .getDeliverToLocation();
+                .findDeliverToLocation();
         assertTrue(updatedLocation.contains("Los Angeles 90001"));
     }
 
     @Test
-    public void isShippingToPolandAvailable() {
-        var shippingCountries = new HomePage(webDriver).open()
-                .clickDeliverToIcon()
-                .clickCountriesDropDown()
-                .getShipToCountries();
-        assertTrue(shippingCountries.contains("Poland"));
+    public void testIfShippingToPolandIsAvailable() {
+        var deliverToCountries = new HomePage(webDriver)
+                .open()
+                .findCountriesAvailableForDelivery();
+        assertTrue(deliverToCountries.contains("Poland"));
     }
 
     @Test
     public void changeDeliverToCountry() {
-        var shipToCountry = new HomePage(webDriver).open()
-                .clickDeliverToIcon()
-                .clickCountriesDropDown()
-                .clickPoland()
-                .clickDone()
+        var deliverToCountry = new HomePage(webDriver)
+                .open()
+                .changeDeliveryCountryToPoland()
                 .waitForPageLoad()
-                .clickRandomCategory()
-                .clickRandomResult()
-                .getShipToCountry();
-        assertTrue(shipToCountry.contains("Poland"));
+                .selectAProductCategory()
+                .selectAProduct()
+                .findDeliverToCountry();
+        assertTrue(deliverToCountry.contains("Poland"));
     }
 }

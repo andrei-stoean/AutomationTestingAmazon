@@ -7,7 +7,7 @@ import org.openqa.selenium.support.FindBy;
 
 public class ProductPage extends BasePage {
 
-    @FindBy(xpath = "//span[contains(text(), 'No Import')] | //div[@id='contextualIngressPtLabel_deliveryShortLine']/span[2]")
+    @FindBy(xpath = "//div[@id='contextualIngressPtLabel_deliveryShortLine']/span[2]")
     WebElement country;
     @FindBy(id = "add-to-cart-button")
     WebElement addButton;
@@ -21,7 +21,7 @@ public class ProductPage extends BasePage {
         super(webDriver);
     }
 
-    public String getShipToCountry() {
+    public String findDeliverToCountry() {
         return country.getAttribute("textContent");
     }
 
