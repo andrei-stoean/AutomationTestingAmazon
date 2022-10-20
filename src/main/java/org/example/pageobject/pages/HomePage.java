@@ -52,6 +52,7 @@ public class HomePage extends BasePage {
 
     public HomePage open() {
         webDriver.get(AMAZON_URL);
+        webDriver.manage().deleteAllCookies();
         return this;
     }
 
