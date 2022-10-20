@@ -8,7 +8,6 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import javax.xml.transform.Result;
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
@@ -40,6 +39,12 @@ public class ResultsPage extends BasePage {
     WebElement seeAllResults;
     @FindBy(xpath = "//*[contains(text(),'Seagate Portable')]")
     WebElement openItem;
+
+    @FindBy(xpath = "//div[@class='a-row']")
+    WebElement textErorr;
+
+    @FindBy(xpath = "//span[@class=\"a-color-state a-text-bold\"]")
+    WebElement textEqualsWithKey;
 
     public ResultsPage(WebDriver webDriver) {
         super(webDriver);
@@ -77,6 +82,11 @@ public class ResultsPage extends BasePage {
                 .collect(Collectors.toList());
     }
 
+    public List<String> resultsList() {
+        return results.stream()
+                .map(WebElement::getText).collect(Collectors.toList());
+    }
+
     public ResultsPage clickSortByDropDown() {
         sortByDropDown.click();
         return this;
@@ -91,17 +101,28 @@ public class ResultsPage extends BasePage {
         highToLow.click();
         return this;
     }
-    public ResultsPage clickSeeAllResults(){
+
+    public ResultsPage clickSeeAllResults() {
         seeAllResults.click();
         return new ResultsPage(webDriver);
     }
-    public ProductPage clickOnItem(){
+
+    public String searchSpecificWordResults() {
+        return textEqualsWithKey.getText();
+    }
+
+    public ProductPage clickOnItem() {
         openItem.click();
         return new ProductPage(webDriver);
     }
-    public ResultsPage waitItemToBeClickable(){
+
+    public ResultsPage waitItemToBeClickable() {
         new WebDriverWait(webDriver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.elementToBeClickable(webDriver.findElement(By.xpath("//*[contains(text(),'Seagate Portable')]"))));
         return this;
+    }
+
+    public String getIncorectMessage() {
+        return textErorr.getText();
     }
 }

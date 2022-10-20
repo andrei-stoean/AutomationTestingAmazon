@@ -39,6 +39,12 @@ public class HomePage extends BasePage {
     @FindBy(xpath = "//a[@aria-label=\"Computers & Accessories\"]")
     WebElement computersCategory;
 
+    @FindBy(id = "twotabsearchtextbox")
+    WebElement searchBar;
+
+    @FindBy(id ="nav-search-submit-text")
+    WebElement searchButton;
+
 
     public HomePage(WebDriver webDriver) {
         super(webDriver);
@@ -51,6 +57,12 @@ public class HomePage extends BasePage {
 
     public HomePage clickDeliverToIcon() {
         deliverToIcon.click();
+        return this;
+    }
+
+    public HomePage SearchGivenText(String toSearch) {
+        searchBar.sendKeys(toSearch);
+        searchButton.click();
         return this;
     }
 
