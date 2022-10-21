@@ -1,14 +1,10 @@
 package org.example.pageobject.pages;
 
 import org.example.pageobject.BasePage;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -50,12 +46,12 @@ public class ResultsPage extends BasePage {
         super(webDriver);
     }
 
-    public ProductPage selectAProduct() {
+    public ProductPage selectARandomProduct() {
         results.get(new Random().nextInt(results.size())).click();
         return new ProductPage(webDriver);
     }
 
-    public ResultsPage selectABrand() {
+    public ResultsPage selectARandomBrand() {
         WebElement brand = brands.stream()
                 .filter(WebElement::isDisplayed)
                 .findAny().orElseThrow();
@@ -114,12 +110,6 @@ public class ResultsPage extends BasePage {
     public ProductPage clickOnItem() {
         openItem.click();
         return new ProductPage(webDriver);
-    }
-
-    public ResultsPage waitItemToBeClickable() {
-        new WebDriverWait(webDriver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.elementToBeClickable(webDriver.findElement(By.xpath("//*[contains(text(),'Seagate Portable')]"))));
-        return this;
     }
 
     public String getIncorectMessage() {

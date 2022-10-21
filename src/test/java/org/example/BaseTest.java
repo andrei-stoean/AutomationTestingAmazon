@@ -17,6 +17,7 @@ public abstract class BaseTest {
     public void setUpDriver() {
         webDriver.manage().window().maximize();
     }
+
     @AfterClass
     public void closeDriver() {
         webDriver.quit();

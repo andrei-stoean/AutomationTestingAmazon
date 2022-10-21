@@ -12,7 +12,7 @@ public class DeliverToTests extends BaseTest {
         var updatedLocation = new HomePage(webDriver)
                 .open()
                 .changeDeliveryLocationByProvidingZipCode(losAngelesZipCode)
-                .waitForPageLoad()
+                .waitForLocationUpdate()
                 .findDeliverToLocation();
         assertTrue(updatedLocation.contains("Los Angeles 90001"));
     }
@@ -30,9 +30,9 @@ public class DeliverToTests extends BaseTest {
         var deliverToCountry = new HomePage(webDriver)
                 .open()
                 .changeDeliveryCountryToPoland()
-                .waitForPageLoad()
-                .selectAProductCategory()
-                .selectAProduct()
+                .waitForLocationUpdate()
+                .selectARandomCategory()
+                .selectARandomProduct()
                 .findDeliverToCountry();
         assertTrue(deliverToCountry.contains("Poland"));
     }

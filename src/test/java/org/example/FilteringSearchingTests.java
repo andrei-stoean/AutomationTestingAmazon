@@ -13,8 +13,8 @@ public class FilteringSearchingTests extends BaseTest{
     public void searchByCategoryBrand() {
         var numberOfResultsContainingBrandName = new HomePage(webDriver)
                 .open()
-                .selectAProductCategory()
-                .selectABrand()
+                .selectARandomCategory()
+                .selectARandomBrand()
                 .findNumberOfProductsContainingBrandName();
         assertTrue(numberOfResultsContainingBrandName > 0);
     }
@@ -25,8 +25,8 @@ public class FilteringSearchingTests extends BaseTest{
         var maxPrice = new Random().nextInt(minPrice, 200);
 
         var priceResults = new HomePage(webDriver).open()
-                .selectAProductCategory()
-                .selectABrand()
+                .selectARandomCategory()
+                .selectARandomBrand()
                 .filterResultsByPrice(minPrice, maxPrice)
                 .findPriceResults();
         assertFalse(priceResults.isEmpty(), "No results within price range");
@@ -41,8 +41,8 @@ public class FilteringSearchingTests extends BaseTest{
     public void sortByPrice() {
         var resultsPage = new HomePage(webDriver)
                 .open()
-                .selectAProductCategory()
-                .selectABrand();
+                .selectARandomCategory()
+                .selectARandomBrand();
 
         var priceResults = resultsPage
                 .sortResultsByPriceIncreasing()

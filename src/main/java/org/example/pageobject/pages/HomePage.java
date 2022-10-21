@@ -65,13 +65,13 @@ public class HomePage extends BasePage {
         dropDown.click();
     }
 
-    public HomePage waitForPageLoad() {
+    public HomePage waitForLocationUpdate() {
         new WebDriverWait(webDriver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.stalenessOf(webDriver.findElement(By.id("nav-global-location-popover-link"))));
         return this;
     }
 
-    public ResultsPage selectAProductCategory() {
+    public ResultsPage selectARandomCategory() {
         categories.get(new Random().nextInt(categories.size())).click();
         return new ResultsPage(webDriver);
     }
