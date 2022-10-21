@@ -30,7 +30,7 @@ public class AddRemoveItemTests extends BaseTest {
                 .addToCart()
                 .clickOnCart()
                 .deleteItem()
-                .waitForPageLoad();
+                .waitForCartStatusText();
 
         var cartMessageString = cartMessage.getCartMessage();
         var priceString = cartMessage.getPrice();

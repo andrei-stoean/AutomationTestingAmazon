@@ -30,7 +30,7 @@ public class CartPage extends BasePage {
         return cartMessage.getText();
     }
 
-    public CartPage waitForPageLoad() {
+    public CartPage waitForCartStatusText() {
         new WebDriverWait(webDriver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.textToBe(By.xpath("//div[@class=\"a-row sc-cart-header\"]/div/h1"),"Your Amazon Cart is empty."));
         return this;
